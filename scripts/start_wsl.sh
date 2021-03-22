@@ -16,5 +16,5 @@ cd $BASEDIR/../
 docker-compose -f docker-compose.yml up -d
 
 MAX_USER_WATCHES=524288
-sudo sed -ri 's/^(fs\.inotify\.max_user_watches\=)(.*)$/\1'"$MAX_USER_WATCHES"'/g' /etc/sysctl.conf
-sudo sysctl -p >> /dev/null
+cat /etc/sysctl.conf | grep max_user_watches || (echo "fs.inotify.max_user_watches=$MAX_USER_WATCHES" | sudo tee -a /etc/sysctl.conf  && sudo sysctl -p >> /dev/null)
+cat /etc/sysctl.conf | grep "max_user_watches=$MAX_USER_WATCHES" || (sudo sed -ri 's/^(fs\.inotify\.max_user_watches\=)(.*)$/\1'"$MAX_USER_WATCHES"'/g' /etc/sysctl.conf && sudo sysctl -p >> /dev/null)
